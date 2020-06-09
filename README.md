@@ -45,3 +45,13 @@ WINDOWS: `venv\Scripts\Activate`
 # Updating this readme:
 If you need to update the README.md, follow the style guide here: 
 > https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax
+
+# Using the Wikipedia webscrape:
+1. Add the directory `scrapes` to the folder the wikipedia scrapes are in
+2. Scrape:
+   - if you wish to do a single scrape:
+     - go into `wikipedia_scrape.py`, go down to the `if __name__ == "__main__":`
+     - edit `url = ""` to be a wikiepedia article url
+   - if you wish to do a recursive scrape:
+     - go into `wikipedia_scrape_rec.py`, go down to the `if __name__ == "__main__":`
+     - edit `url = ""` to be a wikiepedia article url
