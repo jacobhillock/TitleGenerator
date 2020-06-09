@@ -11,6 +11,7 @@ import requests
 import urllib.request
 import time
 import re
+from pathlib import Path
 from bs4 import BeautifulSoup
 from io import StringIO
 from html.parser import HTMLParser
@@ -33,28 +34,26 @@ def strip_tags(html):
     return s.get_data()
 
 def scrape(url):
+    time.sleep(.05)
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
     title = strip_tags(str(soup.find("h1", {"id": "firstHeading"})))
-    paras = soup.findAll('p')[1:]
-    for i in range(len(paras)):
-        paras[i] = strip_tags(str(paras[i]))
+    file_name = title.replace(" ", "_").replace("/", "_") + ".txt"
+    
+    if not Path(f"scrapes/{file_name}").is_file():
+        paras = soup.findAll('p')[1:]
+        for i in range(len(paras)):
+            paras[i] = strip_tags(str(paras[i]))
 
-    file_name = title.replace(" ", "_") + ".txt"
-    with open("scrapes/" + file_name, "w+") as file:
-        data = f"{title}\n\n"
-        for p in paras:
-            data += p
-        regex = re.compile("\[\d*\]")
-        data = regex.sub("", data)
-        file.write(data)
-        print('File writen')
+        with open("scrapes/" + file_name, "w+") as file:
+            data = f"{title}\n\n"
+            for p in paras:
+                data += p
+            regex = re.compile("\[\d*\]")
+            data = regex.sub("", data)
+            file.write(data)
+            print('File writen')
 
 if __name__ == "__main__":
-    urls = [
-        ""
-    ]
-
-    for url in urls:
-        if url != "":
-            scrape(url)
+    url = ""
+    scrape(url)
