@@ -5,7 +5,6 @@
 # https://stackoverflow.com/questions/2136267/beautiful-soup-and-extracting-a-div-and-its-contents-by-id#2136323
 
 # Writen by Jacob Hillock / jmanh128 on github. Using above for help to write
-url = "https://en.wikipedia.org/wiki/Python_(programming_language)"
 
 
 import requests
@@ -33,20 +32,29 @@ def strip_tags(html):
     s.feed(html)
     return s.get_data()
 
+def scrape(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, "html.parser")
+    title = strip_tags(str(soup.find("h1", {"id": "firstHeading"})))
+    paras = soup.findAll('p')[1:]
+    for i in range(len(paras)):
+        paras[i] = strip_tags(str(paras[i]))
 
-response = requests.get(url)
-soup = BeautifulSoup(response.text, "html.parser")
-title = strip_tags(str(soup.find("h1", {"id": "firstHeading"})))
-paras = soup.findAll('p')[1:]
-for i in range(len(paras)):
-    paras[i] = strip_tags(str(paras[i]))
+    file_name = title.replace(" ", "_") + ".txt"
+    with open("scrapes/" + file_name, "w+") as file:
+        data = f"{title}\n\n"
+        for p in paras:
+            data += p
+        regex = re.compile("\[\d*\]")
+        data = regex.sub("", data)
+        file.write(data)
+        print('File writen')
 
-file_name = title.replace(" ", "_") + ".txt"
-with open("scrapes/" + file_name, "w+") as file:
-    data = f"{title}\n\n"
-    for p in paras:
-        data += p
-    regex = re.compile("\[\d*\]")
-    data = regex.sub("", data)
-    file.write(data)
-    print('File writen')
+if __name__ == "__main__":
+    urls = [
+        ""
+    ]
+
+    for url in urls:
+        if url != "":
+            scrape(url)
