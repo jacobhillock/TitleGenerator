@@ -15,6 +15,7 @@ from pathlib import Path
 from bs4 import BeautifulSoup
 from io import StringIO
 from html.parser import HTMLParser
+from cross_platform_support import dir_separater
 
 class MLStripper(HTMLParser):
     def __init__(self):
@@ -34,18 +35,19 @@ def strip_tags(html):
     return s.get_data()
 
 def scrape(url):
+    s = dir_separater()
     time.sleep(.05)
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
     title = strip_tags(str(soup.find("h1", {"id": "firstHeading"})))
     file_name = title.replace(" ", "_").replace("/", "_") + ".txt"
     
-    if not Path(f"scrapes/{file_name}").is_file():
+    if not Path(f"scrapes{s}{file_name}").is_file():
         paras = soup.findAll('p')[1:]
         for i in range(len(paras)):
             paras[i] = strip_tags(str(paras[i]))
 
-        with open("scrapes/" + file_name, "w+") as file:
+        with open(f"scrapes{s}" + file_name, "w+") as file:
             data = f"{title}\n\n"
             for p in paras:
                 data += p
