@@ -2,7 +2,7 @@
 This Python program was written by:
 - Jacob Hillock ([jmanh128](https://github.com/jmanh128))
 - Tangeni Shikomba ([dev-mtshikomba](https://github.com/dev-mtshikomba))
-- 
+- Chisulo Mukabe ([NuMellow](https://github.com/NuMellow))
 
 For the COSC462 `Introduction to Information Retrieval and Recommendor Systems` class at Eastern Michigan University.
 
