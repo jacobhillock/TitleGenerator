@@ -36,4 +36,7 @@ if __name__ == "__main__":
     print(len(urls))
     for i in range(len(urls)):
         print(f"{i+1}/{len(urls)}")
-        scrape(urls[i])
+        try:
+            scrape(urls[i])
+        except:
+            print(f"{urls[i]} could not print")
