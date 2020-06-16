@@ -12,7 +12,10 @@ Our methodes include:
 Our sources include:
 - Sources
 
+# Python version
 
+- Python 3.8 recommended
+- Currently testing Python 3.7 
 
 # How to use python venv
 ## **Make venv**
