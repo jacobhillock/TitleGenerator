@@ -19,7 +19,7 @@ Our sources include:
 
 # How to use python venv
 ## **Make venv**
-`python -m venv [venv]`
+`$ python -m venv [venv]`
 
 > NOTE: [venv] can be whatever, I usually just leave it as "venv"
 
@@ -28,17 +28,17 @@ Our sources include:
 > NOTE: this *probably* does not work with anaconda/conda, please use normal python.
 
 ## **Activate venv**
-MAC/LINUX: `source venv/bin/activate`
+MAC/LINUX: `$ source venv/bin/activate`
 
-WINDOWS: `venv\Scripts\Activate`
+WINDOWS: `$ venv\Scripts\Activate`
 
 ## **Load requirements**
-`pip install -r requirements.txt`
+`$ pip install -r requirements.txt`
 
 > NOTE: Make sure to activate the venv
 
 ## **Update requirements**
-`pip freeze > requirements.txt`
+`$ pip freeze > requirements.txt`
 
 > NOTE: Make sure the venv is activated
 
@@ -50,12 +50,11 @@ If you need to update the README.md, follow the style guide here:
 > https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax
 
 # Using the Wikipedia webscrape:
-1. Add the directory `scrapes` to the folder the wikipedia scrapes are in
-2. Scrape:
+1. Scrape:
    - if you wish to do a single scrape:
-     - `python wikipedia_scrape.py --article='[ARTICLE]'`
+     - `$ python wikipedia_scrape.py --article='[ARTICLE]'`
    - if you wish to do a recursive scrape:
-     - `python wikipedia_scrape_rec.py --article='[ARTICLE]' [--depth=[n]]`
+     - `$ python wikipedia_scrape_rec.py --article='[ARTICLE]' [--depth=[n]]`
      - depth is an optional field
 
 # Passing arguments from the terminal
