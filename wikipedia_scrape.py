@@ -11,6 +11,7 @@ import requests
 import urllib.request
 import time
 import re
+import os
 from pathlib import Path
 from bs4 import BeautifulSoup
 from io import StringIO
@@ -42,6 +43,9 @@ def scrape(url):
     title = strip_tags(str(soup.find("h1", {"id": "firstHeading"})))
     file_name = title.replace(" ", "_").replace("/", "_") + ".txt"
     
+    if not Path(f'scrapes{s}').is_dir():
+        os.makedirs(f'scrapes{s}')
+
     if not Path(f"scrapes{s}{file_name}").is_file():
         paras = soup.findAll('p')[1:]
         for i in range(len(paras)):
