@@ -48,7 +48,7 @@ def scrape(url):
             paras[i] = strip_tags(str(paras[i]))
 
         with open(f"scrapes{s}" + file_name, "w+") as file:
-            data = f"{title}\n\n"
+            data = f""
             for p in paras:
                 data += p
             regex = re.compile("\[\d*\]")

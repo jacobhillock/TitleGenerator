@@ -112,17 +112,16 @@ def main(key_word):
     scrape(url='https://en.wikipedia.org/wiki/'+key_word)
 
     file_name = 'scrapes/'+key_word+'.txt'
-    title, text = '', ''
+    text = ''
     ps = PorterStemmer()
     with open(file_name) as file:
         doc = file.read()
         print(doc)
         data = doc.split('\n\n')
         # print(data)
-        data[1] = data[1].replace('\n', ' ')
+        data[0] = data[0].replace('\n', ' ')
         # print(data)
-        title = data[0]
-        text = data[1]
+        text = data[0]
     
     test_mod = text.lower()
     sentences = test_mod.split('. ')
