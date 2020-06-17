@@ -54,7 +54,7 @@ def extract_keywords(sentences):
     for sent in sentences:
         words = sent.split(" ")
         for w in words:
-            if w.lower() not in key_words and w is not "":
+            if w.lower() not in key_words and w != "":
                 key_words.append(w.lower())
 
 #calculates the IDF of a word given the number of sentences it appears in 
@@ -103,23 +103,22 @@ def prep_idf_tf(sentences):
 
 
 # main takes a keyword to use when scraping the wikipedia
-def main(article):
+def main(article, do_scrape):
 
     article = article.replace(' ', '_')
 
-    # perform some scraping from wikipedia using the keyword passed
-    scrape(url='https://en.wikipedia.org/wiki/'+article)
-
-    file_name = 'scrapes/'+article+'.txt'
-    title, text = '', ''
+    if do_scrape:
+        # perform some scraping from wikipedia using the keyword passed
+        article = scrape(url='https://en.wikipedia.org/wiki/'+article)
+    file_name = f'scrapes/{article}'
+    
+    text = ''
     ps = PorterStemmer()
     with open(file_name) as file:
         doc = file.read()
         print(doc)
         data = doc.split('\n\n')
-        # print(data)
         data[0] = data[0].replace('\n', ' ')
-        # print(data)
         text = data[0]
     
     test_mod = text.lower()
@@ -158,11 +157,16 @@ def main(article):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--article', default='Artificial_Intelligence',
-                        help='Keyword to scrape [default: Aritificial Intelligence]')
+                        help='Wikipedia article to scrape and title [default: Aritificial Intelligence]')
+    parser.add_argument('--doc', default='',
+                        help='Document to title [default: \'\']')
 
     FLAGS = parser.parse_args()
 
     # lets capture the keyword to scrape from wikipedia
     article = FLAGS.article
-
-    main(article)
+    doc = FLAGS.doc
+    if doc == '':
+        main(article, True)
+    else:
+        main(doc, False)
