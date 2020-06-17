@@ -16,7 +16,8 @@ num_of_sentences = 0 #Number of sentences in the document
 
 key_words=[]	#List of Key Words
 idf_list =[]	#Will contain the IDF of each keyword
-ntf_global =[]	#Contains the number of times each keyword appears over the whole document
+tf_list =[]		#Contains the number of times each keyword appears over the whole document
+ntf_list =[]	#Contains the normalized term frequency of each keyword
 
 #Displays key words
 def display_keywords():
@@ -33,6 +34,15 @@ def display_keywords():
 def display_idf():
     global idf_list	
     print("IDF List: ", idf_list)
+
+def display_ntf():
+    global tf_list
+    global ntf_list
+
+    print("NTF Global: ", tf_list)
+    print()
+    print("NTF Normal: ", ntf_list)
+    print()
 
 #Extracts keywords from a given sentence list
 def extract_keywords(sentences):
@@ -57,10 +67,25 @@ def calc_idf(count):
 
     return idf	
 
+def calc_ntf():
+    global tf_list
+    global ntf_list
+
+    max_val = max(tf_list)
+    if max_val == 0:
+        max_val = 1
+        print("Potential error with ntf. Found max value to be 0, changing to 1.")
+
+    for i in tf_list:
+        ntf_list.append(i/max_val)
+	
+    #print("Global/Normal Length: ", len(tf_list), len(ntf_list))
+
 #prep_idf_tf counts the frequency of the words both per sentence and over the entire document
 def prep_idf_tf(sentences):
     global key_words
     global idf_list
+    global tf_list
 
     for key in key_words:
         count = 0 #Tracks if a word has appeared in a sentence does not count multiple occurrences
@@ -72,7 +97,7 @@ def prep_idf_tf(sentences):
                 glob_count += len(temp)
         #print(key + ": ", count)		
         idf_list.append(calc_idf(count))
-        ntf_global.append(glob_count)
+        tf_list.append(glob_count)
 
 
 
@@ -119,6 +144,8 @@ def main():
     #display_keywords() 
     prep_idf_tf(sentences)
     #display_idf()
+    calc_ntf() #calculates NTF values of the keywords
+    #display_ntf()
 
 if __name__ == '__main__':
     main()
