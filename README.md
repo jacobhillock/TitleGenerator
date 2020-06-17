@@ -30,7 +30,7 @@ Our sources include:
 ## **Activate venv**
 MAC/LINUX: `$ source venv/bin/activate`
 
-WINDOWS: `$ venv\Scripts\Activate`
+WINDOWS: `venv\Scripts\Activate`
 
 ## **Load requirements**
 `$ pip install -r requirements.txt`
