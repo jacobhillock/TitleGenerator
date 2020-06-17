@@ -60,8 +60,13 @@ If you need to update the README.md, follow the style guide here:
 
 # Passing arguments from the terminal
 - using the following command shows you all the arguments available for this tool:
-`python main.py -h`
+
+`$ python main.py -h`
+
 - The parameter below allows you scrape the web using keywords, the tools will scrape for a documents from wikipedia using the keyword "Artificial Intelligence", and saves the scraped content to a named text file and then title the article.
-`python main.py --article="[ARTICLE]"`
+
+`$ python main.py --article="[ARTICLE]"`
+
 - The parameter below allows you to title the given document.
-`python main.py --doc="[DOCUMENT]"`
+
+`$ python main.py --doc="[DOCUMENT]"`
