@@ -53,11 +53,10 @@ If you need to update the README.md, follow the style guide here:
 1. Add the directory `scrapes` to the folder the wikipedia scrapes are in
 2. Scrape:
    - if you wish to do a single scrape:
-     - go into `wikipedia_scrape.py`, go down to the `if __name__ == "__main__":`
-     - edit `url = ""` to be a wikiepedia article url
+     - `python wikipedia_scrape.py --article='[ARTICLE]'`
    - if you wish to do a recursive scrape:
-     - go into `wikipedia_scrape_rec.py`, go down to the `if __name__ == "__main__":`
-     - edit `url = ""` to be a wikiepedia article url
+     - `python wikipedia_scrape_rec.py --article='[ARTICLE]' [--depth=[n]]`
+     - depth is an optional field
 
 # Passing arguments from the terminal
 - using the following command shows you all the arguments available for this tool:
@@ -65,6 +64,6 @@ If you need to update the README.md, follow the style guide here:
 python main.py -h
 ```
 - The parameter below allows you scrape the web using keywords, the tools will scrape for a documents from wikipedia using the keyword "Artificial Intelligence", and saves the scraped content to a named text file.
-```python
-python main.py --article="Artificial Interlligence"
-```
+  - `python main.py --article="[ARTICLE]"`
+- The parameter below allows you to title the given document
+  - `python main.py --doc="[DOCUMENT]"`
