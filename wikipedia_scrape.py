@@ -60,6 +60,7 @@ def scrape(url):
             data = regex.sub("", data)
             file.write(data)
             print('File writen')
+    return file_name
 
 if __name__ == "__main__":
 
