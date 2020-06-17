@@ -9,11 +9,76 @@ nltk.download('stopwords')
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 import string
+import re
+import math
+
+num_of_sentences = 0 #Number of sentences in the document
+
+key_words=[]	#List of Key Words
+idf_list =[]	#Will contain the IDF of each keyword
+ntf_global =[]	#Contains the number of times each keyword appears over the whole document
+
+#Displays key words
+def display_keywords():
+    global key_words
+
+    print()
+    print("Key Words: ")
+
+    for word in key_words:
+        print(word)
+
+    print("Total keywords: ", len(key_words))
+
+def display_idf():
+    global idf_list	
+    print("IDF List: ", idf_list)
+
+#Extracts keywords from a given sentence list
+def extract_keywords(sentences):
+    global key_words
+    repeat = False
+
+    for sent in sentences:
+        words = sent.split(" ")
+        for w in words:
+            if w.lower() not in key_words and w is not "":
+                key_words.append(w.lower())
+
+#calculates the IDF of a word given the number of sentences it appears in 
+def calc_idf(count):
+    global num_of_sentences
+    if count == 0:
+        count = 1
+        print("Potential error with idf. Found count to be 0, changing to 1...")
+	
+    idf = math.log((num_of_sentences/count), 2) +1
+    #print ("IDF: " + str(idf))
+
+    return idf	
+
+#prep_idf_tf counts the frequency of the words both per sentence and over the entire document
+def prep_idf_tf(sentences):
+    global key_words
+    global idf_list
+
+    for key in key_words:
+        count = 0 #Tracks if a word has appeared in a sentence does not count multiple occurrences
+        glob_count = 0 #tracks total number of occurences of word over all sentences
+        for sent in sentences:
+            temp = re.findall(key, sent.lower()) #Get number of times key word appears in sentence
+            if len(temp) > 0:
+                count +=1
+                glob_count += len(temp)
+        #print(key + ": ", count)		
+        idf_list.append(calc_idf(count))
+        ntf_global.append(glob_count)
+
 
 
 def main():
 
-    file_name = 'scrapes/Python_(programming_language).txt'
+    file_name = 'scrapes/Battle_of_Cape_Fear_River_(1718).txt'
     title, text = '', ''
     ps = PorterStemmer()
     with open(file_name) as file:
@@ -47,9 +112,13 @@ def main():
         print(s)
     
     print(len(word_list))
-
-    
-
+	
+    global num_of_sentences
+    num_of_sentences = len(sentences)
+    extract_keywords(sentences)
+    #display_keywords() 
+    prep_idf_tf(sentences)
+    #display_idf()
 
 if __name__ == '__main__':
     main()
