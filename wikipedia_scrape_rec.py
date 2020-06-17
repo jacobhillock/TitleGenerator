@@ -1,6 +1,7 @@
 import requests
 import urllib.request
 import time
+import argparse
 from bs4 import BeautifulSoup
 from wikipedia_scrape import scrape
 
@@ -32,7 +33,16 @@ def get_recursive_links(url, depth=0):
 
 
 if __name__ == "__main__":
-    urls = get_recursive_links("https://en.wikipedia.org/wiki/Python_(programming_language)", 1)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--article', default='Artificial_Intelligence',
+                        help='Keyword to scrape [default: Aritificial Intelligence]')
+    parser.add_argument('--depth', default=0,
+                        help='Describes the max recusion depth of this utility [default: 0]')
+    FLAGS = parser.parse_args()
+
+    # lets capture the keyword to scrape from wikipedia
+    base_url = "https://en.wikipedia.org/wiki/"+FLAGS.article
+    urls = get_recursive_links(base_url, int(FLAGS.depth))
     print(len(urls))
     for i in range(len(urls)):
         print(f"{i+1}/{len(urls)}")
