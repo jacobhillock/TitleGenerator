@@ -10,10 +10,35 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 import string
 
+key_words=[] #List of Key Words
+
+#Displays key words
+def display_keywords():
+    global key_words
+
+    print()
+    print("Key Words: ")
+
+    for word in key_words:
+        print(word)
+
+    print("Total keywords: ", len(key_words))
+
+#Extracts keywords from a given sentence list
+def extract_keywords(sentences):
+    global key_words
+    repeat = False
+
+    for sent in sentences:
+        words = sent.split(" ")
+        for w in words:
+            if w.lower() not in key_words and w is not "":
+                key_words.append(w.lower())
+
 
 def main():
 
-    file_name = 'scrapes/Python_(programming_language).txt'
+    file_name = 'scrapes/Battle_of_Cape_Fear_River_(1718).txt'
     title, text = '', ''
     ps = PorterStemmer()
     with open(file_name) as file:
@@ -47,8 +72,9 @@ def main():
         print(s)
     
     print(len(word_list))
-
-    
+	
+    extract_keywords(sentences)
+    #display_keywords() 
 
 
 if __name__ == '__main__':
