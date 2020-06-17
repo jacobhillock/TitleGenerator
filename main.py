@@ -103,16 +103,15 @@ def prep_idf_tf(sentences):
 
 
 # main takes a keyword to use when scraping the wikipedia
-def main(key_word):
+def main(article):
 
+    article = article.replace(' ', '_')
 
-    key_word = key_word.replace(' ','_')
-    
     # perform some scraping from wikipedia using the keyword passed
-    scrape(url='https://en.wikipedia.org/wiki/'+key_word)
+    scrape(url='https://en.wikipedia.org/wiki/'+article)
 
-    file_name = 'scrapes/'+key_word+'.txt'
-    text = ''
+    file_name = 'scrapes/'+article+'.txt'
+    title, text = '', ''
     ps = PorterStemmer()
     with open(file_name) as file:
         doc = file.read()
@@ -158,12 +157,12 @@ def main(key_word):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--doc', default='Artificial_Intelligence',
+    parser.add_argument('--article', default='Artificial_Intelligence',
                         help='Keyword to scrape [default: Aritificial Intelligence]')
 
     FLAGS = parser.parse_args()
 
     # lets capture the keyword to scrape from wikipedia
-    key_word = FLAGS.doc
+    article = FLAGS.article
 
-    main(key_word)
+    main(article)
