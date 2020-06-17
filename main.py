@@ -11,6 +11,8 @@ from nltk.stem import PorterStemmer
 import string
 import re
 import math
+import argparse
+from wikipedia_scrape import scrape
 
 num_of_sentences = 0 #Number of sentences in the document
 
@@ -100,15 +102,23 @@ def prep_idf_tf(sentences):
         tf_list.append(glob_count)
 
 
+# main takes a keyword to use when scraping the wikipedia
+def main(key_word):
 
-def main():
 
-    file_name = 'scrapes/Battle_of_Cape_Fear_River_(1718).txt'
+    key_word = key_word.replace(' ','_')
+    
+    # perform some scraping from wikipedia using the keyword passed
+    scrape(url='https://en.wikipedia.org/wiki/'+key_word)
+
+    file_name = 'scrapes/'+key_word+'.txt'
     title, text = '', ''
     ps = PorterStemmer()
     with open(file_name) as file:
         doc = file.read()
+        print(doc)
         data = doc.split('\n\n')
+        # print(data)
         data[1] = data[1].replace('\n', ' ')
         # print(data)
         title = data[0]
@@ -148,4 +158,13 @@ def main():
     #display_ntf()
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--doc', default='Artificial_Intelligence',
+                        help='Keyword to scrape [default: Aritificial Intelligence]')
+
+    FLAGS = parser.parse_args()
+
+    # lets capture the keyword to scrape from wikipedia
+    key_word = FLAGS.doc
+
+    main(key_word)

@@ -58,3 +58,13 @@ If you need to update the README.md, follow the style guide here:
    - if you wish to do a recursive scrape:
      - go into `wikipedia_scrape_rec.py`, go down to the `if __name__ == "__main__":`
      - edit `url = ""` to be a wikiepedia article url
+
+# Passing arguments from the terminal
+- using the following command shows you all the arguments available for this tool:
+```python
+python main.py -h
+```
+- The parameter below allows you scrape the web using keywords, the tools will scrape for a documents from wikipedia using the keyword "Artificial Intelligence", and saves the scraped content to a named text file.
+```python
+python main.py --doc='Artificial Interlligence'
+```
