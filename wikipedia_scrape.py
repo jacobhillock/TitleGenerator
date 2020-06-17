@@ -17,6 +17,7 @@ from bs4 import BeautifulSoup
 from io import StringIO
 from html.parser import HTMLParser
 from cross_platform_support import dir_separater
+import argparse
 
 class MLStripper(HTMLParser):
     def __init__(self):
@@ -61,5 +62,16 @@ def scrape(url):
             print('File writen')
 
 if __name__ == "__main__":
-    url = ""
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--article', default='Artificial_Intelligence',
+                        help='Keyword to scrape [default: Aritificial Intelligence]')
+
+    FLAGS = parser.parse_args()
+
+    # lets capture the keyword to scrape from wikipedia
+    article = FLAGS.article
+
+    url = "https://en.wikipedia.org/wiki/"+article
+
     scrape(url)
