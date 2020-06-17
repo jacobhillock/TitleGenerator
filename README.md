@@ -66,5 +66,5 @@ python main.py -h
 ```
 - The parameter below allows you scrape the web using keywords, the tools will scrape for a documents from wikipedia using the keyword "Artificial Intelligence", and saves the scraped content to a named text file.
 ```python
-python main.py --doc='Artificial Interlligence'
+python main.py --article="Artificial Interlligence"
 ```
