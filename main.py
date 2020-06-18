@@ -16,10 +16,10 @@ from wikipedia_scrape import scrape
 
 num_of_sentences = 0 #Number of sentences in the document
 
-key_words=[]	#List of Key Words
-idf_list =[]	#Will contain the IDF of each keyword
-tf_list =[]		#Contains the number of times each keyword appears over the whole document
-ntf_list =[]	#Contains the normalized term frequency of each keyword
+key_words = []	#List of Key Words
+idf_list  = []	#Will contain the IDF of each keyword
+tf_list   = []  #Contains the number of times each keyword appears over the whole document
+ntf_list  = []	#Contains the normalized term frequency of each keyword
 
 #Displays key words
 def display_keywords():
@@ -46,17 +46,6 @@ def display_ntf():
     print("NTF Normal: ", ntf_list)
     print()
 
-#Extracts keywords from a given sentence list
-def extract_keywords(sentences):
-    global key_words
-    repeat = False
-
-    for sent in sentences:
-        words = sent.split(" ")
-        for w in words:
-            if w.lower() not in key_words and w != "":
-                key_words.append(w.lower())
-
 #calculates the IDF of a word given the number of sentences it appears in 
 def calc_idf(count):
     global num_of_sentences
@@ -64,7 +53,7 @@ def calc_idf(count):
         count = 1
         print("Potential error with idf. Found count to be 0, changing to 1...")
 	
-    idf = math.log((num_of_sentences/count), 2) +1
+    idf = math.log((num_of_sentences/count), 2) + 1
     #print ("IDF: " + str(idf))
 
     return idf	
@@ -90,69 +79,109 @@ def prep_idf_tf(sentences):
     global tf_list
 
     for key in key_words:
-        count = 0 #Tracks if a word has appeared in a sentence does not count multiple occurrences
-        glob_count = 0 #tracks total number of occurences of word over all sentences
+        # Tracks if a word has appeared in a sentence at least once
+        count = 0 
+        # Tracks total number of occurences of word over all sentences
+        glob_count = 0 
         for sent in sentences:
-            temp = re.findall(key, sent.lower()) #Get number of times key word appears in sentence
+            # Get number of times key word appears in sentence
+            temp = re.findall(key, sent)
             if len(temp) > 0:
-                count +=1
+                count += 1
                 glob_count += len(temp)
-        #print(key + ": ", count)		
         idf_list.append(calc_idf(count))
         tf_list.append(glob_count)
 
 
 # main takes a keyword to use when scraping the wikipedia
-def main(article, do_scrape):
-
+def main(article, do_scrape, title_length):
+    # -----------------------------------------------------------
+    # Load document into memport
+    # -----------------------------------------------------------
     article = article.replace(' ', '_')
 
+    # perform some scraping from wikipedia using the keyword passed
     if do_scrape:
-        # perform some scraping from wikipedia using the keyword passed
         article = scrape(url='https://en.wikipedia.org/wiki/'+article)
     file_name = f'scrapes/{article}'
     
+    # Load file, and store content
     text = ''
-    ps = PorterStemmer()
     with open(file_name) as file:
         doc = file.read()
-        print(doc)
-        data = doc.split('\n\n')
-        data[0] = data[0].replace('\n', ' ')
-        text = data[0]
+        text = doc.replace('\n', ' ')
     
+
+    # -----------------------------------------------------------
+    # Document processing
+    # -----------------------------------------------------------
+    # make everything lowercase
     test_mod = text.lower()
+    # Splits sentences (assuming all sentences end with a '. ')
     sentences = test_mod.split('. ')
 
-    # python stopwords (link 2)
+    # Stem words, remove stop words, and collect wordlist
     stop = set(stopwords.words('english'))
-    word_list = set()
+    ps = PorterStemmer()
+    global key_words
+    global num_of_sentences
+    
     for i in range(len(sentences)):
         # remove punctuation (link 1)
         sentences[i] = sentences[i].translate(str.maketrans('', '', string.punctuation))
+        # remove stopwords
         sentences[i] = [w for w in sentences[i].split(" ") if w not in stop]
         temp = ''
+        
+        # reconstruct sentence
         for j in range(len(sentences[i])):
             w = ps.stem(sentences[i][j])
             # w = sentences[i][j]
-            word_list.add(w)
+            if len(w) > 1:
+                key_words.append(w)
             temp += w + ' '
+        
+        # put sentence back in string form
         sentences[i] = temp
-    word_list = list(word_list)
-
-    for s in sentences:
-        print(s)
     
-    print(len(word_list))
+    # remove duplicate words and empty string
+    key_words = list(set(key_words))
+    if '' in key_words:
+        key_words.remove('')
 	
-    global num_of_sentences
+    # fill in remaining global variables
     num_of_sentences = len(sentences)
-    extract_keywords(sentences)
-    #display_keywords() 
     prep_idf_tf(sentences)
-    #display_idf()
-    calc_ntf() #calculates NTF values of the keywords
-    #display_ntf()
+    calc_ntf()
+
+    # -----------------------------------------------------------
+    # Title generation
+    # -----------------------------------------------------------
+    # makes text lowercase, removes punctuation from text, and splits it into sentences again
+    sentences_raw = text.lower()
+    sentences_raw = sentences_raw.split('. ')
+    for i in range(len(sentences_raw)):
+        sentences_raw[i] = sentences_raw[i].translate(str.maketrans('', '', string.punctuation))
+    
+    # initialize high_score
+    high_score = -1
+    high_score_title = []
+    for sent in sentences_raw:
+        words = sent.split(' ')
+        for i in range(len(words) - title_length):
+            score = 0
+            for w in words[i:i+title_length]:
+                if w in key_words:
+                    word_locatoin = key_words.index(ps.stem(w))
+                    score += ntf_list[word_locatoin] * idf_list[word_locatoin]
+            if score > high_score:
+                high_score = score
+                high_score_title = words[i:i+title_length]
+    
+    print(high_score)
+    print(high_score_title)
+
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -160,6 +189,8 @@ if __name__ == '__main__':
                         help='Wikipedia article to scrape and title [default: Aritificial Intelligence]')
     parser.add_argument('--doc', default='',
                         help='Document to title [default: \'\']')
+    parser.add_argument('--length', default='5',
+                        help='Length of the title [default: 5]')
 
     FLAGS = parser.parse_args()
 
@@ -167,6 +198,6 @@ if __name__ == '__main__':
     article = FLAGS.article
     doc = FLAGS.doc
     if doc == '':
-        main(article, True)
+        main(article, True, int(FLAGS.length))
     else:
-        main(doc, False)
+        main(doc, False, int(FLAGS.length))
