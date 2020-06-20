@@ -64,8 +64,18 @@ If you need to update the README.md, follow the style guide here:
 
 - The parameter below allows you scrape the web using keywords, the tools will scrape for a documents from wikipedia using the keyword "Artificial Intelligence", and saves the scraped content to a named text file and then title the article.
 
-`$ python main.py --article="[ARTICLE]"`
+`$ python main.py --article="ARTICLE"`
 
 - The parameter below allows you to title the given document.
 
-`$ python main.py --doc="[DOCUMENT]"`
+`$ python main.py --doc="DOC"`
+
+- The parameter below allows you to specify a length of the title (default: automatic 1 [A1])
+  - 'A2' would generate a title of at least two long
+  - '2' would generate a title of exactly two long
+
+`$ python main.py --length="LENGTH"`
+
+- The parameter below allows you to specify a words 'max score' (default: N)
+
+`$ python main.py --maxScore="MAXSCORE"`
