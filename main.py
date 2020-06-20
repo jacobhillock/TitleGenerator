@@ -16,10 +16,11 @@ from wikipedia_scrape import scrape
 
 num_of_sentences = 0 #Number of sentences in the document
 
-key_words = []	#List of Key Words
-idf_list  = []	#Will contain the IDF of each keyword
-tf_list   = []  #Contains the number of times each keyword appears over the whole document
-ntf_list  = []	#Contains the normalized term frequency of each keyword
+key_words  = []	# List of Key Words
+idf_list   = []	# Will contain the IDF of each keyword
+tf_list    = [] # Contains the number of times each keyword appears over the whole document
+ntf_list   = []	# Contains the normalized term frequency of each keyword
+score_list = [] # ntf_list * idf_list
 
 #Displays key words
 def display_keywords():
@@ -92,9 +93,40 @@ def prep_idf_tf(sentences):
         idf_list.append(calc_idf(count))
         tf_list.append(glob_count)
 
+def calc_scores ():
+    global idf_list
+    global ntf_list
+    global score_list
+
+    for i, n in zip(idf_list, ntf_list):
+        score_list.append(i*n)
+
+def process_scores (max_score):
+    global score_list
+    for i in range(len(score_list)):
+        if score_list[i] > max_score:
+            score_list[i] = 0
+
+def find_title (sentences, length):
+    ps = PorterStemmer()
+    global score_list
+    high_score = -1
+    high_score_title = []
+    for sent in sentences:
+        words = sent.split(' ')
+        for i in range(len(words) - length):
+            score = 0
+            for w in words[i:i+length]:
+                if w in key_words:
+                    word_locatoin = key_words.index(ps.stem(w))
+                    score += score_list[word_locatoin]
+            if score > high_score:
+                high_score = score
+                high_score_title = words[i:i+length]
+    return high_score, high_score_title
 
 # main takes a keyword to use when scraping the wikipedia
-def main(article, do_scrape, title_length):
+def main(article, do_scrape, title_length, max_score):
     # -----------------------------------------------------------
     # Load document into memport
     # -----------------------------------------------------------
@@ -153,6 +185,9 @@ def main(article, do_scrape, title_length):
     num_of_sentences = len(sentences)
     prep_idf_tf(sentences)
     calc_ntf()
+    calc_scores()
+    if max_score != 'N':
+        process_scores(float(max_score))
 
     # -----------------------------------------------------------
     # Title generation
@@ -163,23 +198,30 @@ def main(article, do_scrape, title_length):
     for i in range(len(sentences_raw)):
         sentences_raw[i] = sentences_raw[i].translate(str.maketrans('', '', string.punctuation))
     
-    # initialize high_score
-    high_score = -1
-    high_score_title = []
-    for sent in sentences_raw:
-        words = sent.split(' ')
-        for i in range(len(words) - title_length):
-            score = 0
-            for w in words[i:i+title_length]:
-                if w in key_words:
-                    word_locatoin = key_words.index(ps.stem(w))
-                    score += ntf_list[word_locatoin] * idf_list[word_locatoin]
-            if score > high_score:
-                high_score = score
-                high_score_title = words[i:i+title_length]
+    if title_length[0] != 'A':
+        # initialize high_score
+        high_score, high_score_title = find_title(sentences_raw, int(title_length))
+        
+        print(high_score)
+        print(high_score_title)
     
-    print(high_score)
-    print(high_score_title)
+    else:
+        scores_title = {}
+        titles       = {}
+        for i in range(int(title_length[1:]),11):
+            scores_title[i], titles[i] = find_title(sentences_raw, i)
+        
+        best_score_word = -1
+        best_length = 0
+        for k in sorted(titles.keys()):
+            if (s:=(scores_title[k] / (k+1))) > best_score_word:
+                best_length = k
+                best_score_word = s
+        
+        print(scores_title[best_length])
+        print(titles[best_length])
+
+
 
 
 
@@ -189,8 +231,10 @@ if __name__ == '__main__':
                         help='Wikipedia article to scrape and title [default: Aritificial Intelligence]')
     parser.add_argument('--doc', default='',
                         help='Document to title [default: \'\']')
-    parser.add_argument('--length', default='5',
-                        help='Length of the title [default: 5]')
+    parser.add_argument('--length', default='A1',
+                        help='Length of the title; integer is hard length, add \'A\' to front of integer for minimum length [default: A1]')
+    parser.add_argument('--maxScore', default='N',
+                        help='Max word score; N for no max [default: N]')
 
     FLAGS = parser.parse_args()
 
@@ -198,6 +242,6 @@ if __name__ == '__main__':
     article = FLAGS.article
     doc = FLAGS.doc
     if doc == '':
-        main(article, True, int(FLAGS.length))
+        main(article, True, FLAGS.length, FLAGS.maxScore)
     else:
-        main(doc, False, int(FLAGS.length))
+        main(doc, False, FLAGS.length, FLAGS.maxScore)
