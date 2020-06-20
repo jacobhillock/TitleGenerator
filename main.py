@@ -16,11 +16,12 @@ from wikipedia_scrape import scrape
 
 num_of_sentences = 0 #Number of sentences in the document
 
-key_words  = []	# List of Key Words
-idf_list   = []	# Will contain the IDF of each keyword
-tf_list    = [] # Contains the number of times each keyword appears over the whole document
-ntf_list   = []	# Contains the normalized term frequency of each keyword
-score_list = [] # ntf_list * idf_list
+key_words  = []	   # List of Key Words
+idf_list   = []	   # Will contain the IDF of each keyword
+tf_list    = []    # Contains the number of times each keyword appears over the whole document
+ntf_list   = []	   # Contains the normalized term frequency of each keyword
+score_list = []    # ntf_list * idf_list
+must_words = set() # words that must be in the title
 
 #Displays key words
 def display_keywords():
@@ -112,17 +113,25 @@ def find_title (sentences, length):
     global score_list
     high_score = -1
     high_score_title = []
+
+    global must_words
+    must_set = set(must_words)
     for sent in sentences:
         words = sent.split(' ')
         for i in range(len(words) - length):
             score = 0
-            for w in words[i:i+length]:
+            title = words[i:i+length]
+            for w in title:
                 if w in key_words:
                     word_locatoin = key_words.index(ps.stem(w))
                     score += score_list[word_locatoin]
-            if score > high_score:
+            
+            better = score > high_score
+            full = '' not in title
+            inclusive = set(title).intersection(must_set) == must_set
+            if better and full and inclusive:
                 high_score = score
-                high_score_title = words[i:i+length]
+                high_score_title = title
     return high_score, high_score_title
 
 # main takes a keyword to use when scraping the wikipedia
@@ -222,9 +231,6 @@ def main(article, do_scrape, title_length, max_score):
         print(titles[best_length])
 
 
-
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--article', default='Artificial_Intelligence',
@@ -235,12 +241,18 @@ if __name__ == '__main__':
                         help='Length of the title; integer is hard length, add \'A\' to front of integer for minimum length [default: A1]')
     parser.add_argument('--maxScore', default='N',
                         help='Max word score; N for no max [default: N]')
+    parser.add_argument('--mustInclude', default='',
+                        help='Word or words that must be in the title (word1 word2 word3 etc.) [default: \'\'')
 
     FLAGS = parser.parse_args()
 
     # lets capture the keyword to scrape from wikipedia
     article = FLAGS.article
     doc = FLAGS.doc
+
+    if FLAGS.mustInclude != '':
+        must_words = set(FLAGS.mustInclude.lower().split(' '))
+    
     if doc == '':
         main(article, True, FLAGS.length, FLAGS.maxScore)
     else:
