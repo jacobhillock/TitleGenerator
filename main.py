@@ -223,7 +223,8 @@ def main(article, do_scrape, title_length, max_score):
         best_score_word = -1
         best_length = 0
         for k in sorted(titles.keys()):
-            if (s:=(scores_title[k] / (k+1))) > best_score_word:
+            s = (scores_title[k] / (k+1))
+            if s > best_score_word:
                 best_length = k
                 best_score_word = s
         
