@@ -44,6 +44,8 @@ WINDOWS: `venv\Scripts\Activate`
 
 > NOTE: Make sure to commit and push update
 
+## **Download the nltk stopwords**
+`$ python -m nltk.downloader stopwords`
 
 # Updating this readme:
 If you need to update the README.md, follow the style guide here: 
