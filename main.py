@@ -237,7 +237,7 @@ if __name__ == '__main__':
     parser.add_argument('--article', default='Artificial_Intelligence',
                         help='Wikipedia article to scrape and title [default: Aritificial Intelligence]')
     parser.add_argument('--doc', default='',
-                        help='Document to title [default: \'\']')
+                        help='Document name e.g. Filename.txt [default: \'\']')
     parser.add_argument('--length', default='A1',
                         help='Length of the title; integer is hard length, add \'A\' to front of integer for minimum length [default: A1]')
     parser.add_argument('--maxScore', default='N',
