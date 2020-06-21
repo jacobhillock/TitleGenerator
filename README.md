@@ -71,8 +71,8 @@ If you need to update the README.md, follow the style guide here:
 `$ python main.py --doc="DOC"`
 
 - The parameter below allows you to specify a length of the title (default: automatic 1 [A1])
-  - 'A2' would generate a title of at least two long
-  - '2' would generate a title of exactly two long
+  - 'A2' would generate a title of at least two words long
+  - '2' would generate a title of exactly two words long
 
 `$ python main.py --length="LENGTH"`
 
