@@ -241,7 +241,9 @@ if __name__ == '__main__':
     # lets capture the keyword to scrape from wikipedia
     article = FLAGS.article
     doc = FLAGS.doc
+    # if the doc parameter is empty scrape for an article from the web (wikipedia)
     if doc == '':
-        main(article, True, FLAGS.length, FLAGS.maxScore)
+        main(article, False, FLAGS.length, FLAGS.maxScore)
+    # else lookup the stored file 
     else:
-        main(doc, False, FLAGS.length, FLAGS.maxScore)
+        main(doc, True, FLAGS.length, FLAGS.maxScore)
